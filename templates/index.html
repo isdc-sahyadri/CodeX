@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer</title>
+</head>
+<body>
+    <h2>Upload Resume Text</h2>
+    <form id="resumeForm">
+        <textarea id="resume_text" name="resume_text" rows="10" cols="50"></textarea><br>
+        <button type="submit">Analyze Resume</button>
+    </form>
+    <h3>Results:</h3>
+    <p id="skills"></p>
+    <p id="job_match"></p>
+    
+    <script>
+        document.getElementById('resumeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let formData = new FormData();
+            formData.append("resume_text", document.getElementById("resume_text").value);
+
+            fetch("/analyze", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("skills").innerText = "Extracted Skills: " + data.skills.join(", ");
+                document.getElementById("job_match").innerText = "Best Job Match: " + data.best_match;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
